@@ -73,6 +73,8 @@ Run `build.sh help` to get help for additional binaries building (i.e. BACCAble 
 
 ## Flashing
 
+Repository **Stable Diesel 7-inch TFT for UCAN boards** releases can be flashed using [GiUploader](https://github.com/anegrin/GiUploader) on Android devices.
+
 You can use [dfu-util](https://github.com/anegrin/GiUCAN/blob/main/Makefile) or [STM32CubeProgrammer](https://www.st.com/en/development-tools/stm32cubeprog.html); connect boards via USB in boot mode by short cutting BO and 3V3 pins then flash the firmware you like via DFU (Erasing & Programming -> USB from the dropdown on the left).
 
 ## Usage

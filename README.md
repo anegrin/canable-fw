@@ -57,6 +57,7 @@ Plaese read [GiUCAN GitHub Pages](https://anegrin.github.io/GiUCAN/) to learn ab
 - Hardware and connections
 - Building for SLCAN, C1CAN and BHCAN (and BACCAble compatible binaries too)
 - Flashing using [STM32CubeProgrammer](https://www.st.com/en/development-tools/stm32cubeprog.html)
+- Flashing **Stable Diesel 7-inch TFT for UCAN boards** repository releases using [GiUploader](https://github.com/anegrin/GiUploader) on Android devices
 - Customizing build for small displays, gasoline etc.
 - Configure already built firmware (via `settings.ini`)
 
