@@ -13,6 +13,9 @@ build_giucan() {
     CFLAGS="-DSLCAN $EXTRA_FLAG" make clean all
     mv build/GiUCAN*.elf dist/GiUCAN_SLCAN.elf
 
+    CFLAGS="-DELM327 $EXTRA_FLAG" make clean all
+    mv build/GiUCAN*.elf dist/GiUCAN_ELM327.elf
+
     CFLAGS="-DC1CAN $EXTRA_FLAG" make clean all
     mv build/GiUCAN*.elf dist/GiUCAN_C1CAN.elf
 
@@ -51,6 +54,14 @@ build_baccable() {
             -DLED_RX_Pin=GPIO_PIN_1 \
             -DDISABLE_EXTERNAL_OSCILLATOR" make clean all
     mv build/GiUCAN*.elf dist/GiUCAN_SLCAN_BACCAble.elf
+
+    CFLAGS="-DELM327 $EXTRA_FLAG \
+            -DRESET_CMD_PIN=GPIO_PIN_4 \
+            -DCAN_S_PIN=GPIO_PIN_5 \
+            -DCAN_S_PIN_PORT=GPIOA \
+            -DLED_RX_Pin=GPIO_PIN_1 \
+            -DDISABLE_EXTERNAL_OSCILLATOR" make clean all
+    mv build/GiUCAN*.elf dist/GiUCAN_ELM327_BACCAble.elf
 }
 
 if [[ $# -eq 0 ]]; then
@@ -70,8 +81,8 @@ for FLAVOR in "$@"; do
             echo "Usage: $0 (help|giucan|baccable)"
             echo
             echo "help: prints this message"
-            echo "giucan: builds firmware binaries for UCAN boards (C1, BH, SLCAN)"
-            echo "baccable: builds firmware binaries for BACCAble boards (C1, C2, BH, SLCAN)"
+            echo "giucan: builds firmware binaries for UCAN boards (C1, BH, SLCAN, ELM327)"
+            echo "baccable: builds firmware binaries for BACCAble boards (C1, C2, BH, SLCAN, ELM327)"
             echo
             echo "you can build both sets of binaries with: $0 giucan baccable "
             echo

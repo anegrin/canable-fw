@@ -48,6 +48,19 @@ Note: Channel configuration commands must be sent before opening the channel. Th
 
 This firmware currently does not provide any ACK/NACK feedback for serial commands.
 
+## ELM327 mode
+
+ELM327 support was developed using Codex Luna.
+
+Build with `CFLAGS="-DELM327" make clean all`, or use `build.sh` to create the
+ELM327 binary. This USB CDC variant supports the common ELM327 AT settings and
+ISO 15765-4 CAN OBD requests using 11-bit CAN at 500 kbit/s by default. It
+supports single-frame requests and single- or multi-frame ISO-TP responses.
+`ATSPC` selects the ELM user-2 CAN profile (11-bit, 50 kbit/s), and `ATBI`
+is accepted as the initialization-bypass command.
+It is ELM327-compatible, not a full clone: legacy K-line protocols, 29-bit CAN
+requests, and multi-frame requests are not implemented yet.
+
 ## Building, Flashing  and Debugging
 
 Please read [Canable-fw README.md](https://github.com/normaldotcom/canable-fw/blob/master/README.md) as `make` will build SLCAN firmware by default.

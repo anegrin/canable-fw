@@ -4,14 +4,18 @@
 #include "uart.h"
 #include "led.h"
 #include "model.h"
+#ifdef SLCAN
 #include "slcan.h"
+#endif
+#ifdef ELM327
+#include "elm327.h"
+#endif
 #include "processing.h"
 #include "usb_device.h"
-#ifdef SLCAN
-#include "usbd_cdc_if.h"
-#endif
 #ifdef XCAN
 #include "usbd_storage_if.h"
+#else
+#include "usbd_cdc_if.h"
 #endif
 #include "storage.h"
 
@@ -72,6 +76,10 @@ int main(void)
     leds_blink(5, 50);
 #endif
 #ifdef SLCAN
+    leds_blink(4, 100);
+#endif
+#ifdef ELM327
+    elm327_init();
     leds_blink(4, 100);
 #endif
 #ifdef C1CAN
@@ -151,8 +159,11 @@ int main(void)
         }
 #endif
 
-#ifdef SLCAN
+#if defined(SLCAN) || defined(ELM327)
         cdc_process();
+#endif
+#ifdef ELM327
+        elm327_process();
 #endif
         led_process();
         can_process();
@@ -171,7 +182,9 @@ CAN_RxHeaderTypeDef rx_msg_header; // msg header
 uint8_t rx_msg_data[8] = {
     0,
 }; // msg data
+#ifdef SLCAN
 uint8_t msg_buf[SLCAN_MTU];
+#endif
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
 #ifdef C1CAN
@@ -183,37 +196,40 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 
     if (can_rx(&rx_msg_header, rx_msg_data) == HAL_OK)
     {
+#ifdef SLCAN
         uint16_t msg_len = slcan_parse_frame((uint8_t *)&msg_buf, &rx_msg_header, rx_msg_data);
         if (msg_len)
         {
-#ifdef SLCAN
             CDC_Transmit_FS(msg_buf, msg_len);
+        }
+#endif
+#ifdef ELM327
+        elm327_on_can_frame(&rx_msg_header, rx_msg_data);
 #endif
 #ifdef XCAN
-            if (rx_msg_header.RTR == CAN_RTR_DATA)
+        if (rx_msg_header.RTR == CAN_RTR_DATA)
+        {
+            state.car.canIsOnAt = state.board.now;
+            switch (rx_msg_header.IDE)
             {
-                state.car.canIsOnAt = state.board.now;
-                switch (rx_msg_header.IDE)
-                {
-                case CAN_ID_STD:
-                    handle_standard_frame(&state
-                        #ifdef C1CAN
-                        , &settings
-                        #endif
-                        , rx_msg_header, rx_msg_data);
-                    break;
-                case CAN_ID_EXT:
-                    handle_extended_frame(&state
-                        #ifdef C1CAN
-                        , &settings
-                        #endif
-                        , rx_msg_header, rx_msg_data);
-                    break;
-                default:
-                }
+            case CAN_ID_STD:
+                handle_standard_frame(&state
+                    #ifdef C1CAN
+                    , &settings
+                    #endif
+                    , rx_msg_header, rx_msg_data);
+                break;
+            case CAN_ID_EXT:
+                handle_extended_frame(&state
+                    #ifdef C1CAN
+                    , &settings
+                    #endif
+                    , rx_msg_header, rx_msg_data);
+                break;
+            default:
             }
-#endif
         }
+#endif
     }
 }
 

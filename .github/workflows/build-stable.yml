@@ -32,6 +32,11 @@ jobs:
           CFLAGS='-DBUILD_VERSION=\"${{ github.ref_name }}\" -DSLCAN' make clean all
           mv build/GiUCAN*.elf GiUCAN_SLCAN.elf
           
+      - name: Compile ELM327
+        run: |
+          CFLAGS='-DBUILD_VERSION=\"${{ github.ref_name }}\" -DELM327' make clean all
+          mv build/GiUCAN*.elf GiUCAN_ELM327.elf
+
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
@@ -41,3 +46,4 @@ jobs:
             ./GiUCAN_C1CAN.elf
             ./GiUCAN_BHCAN.elf
             ./GiUCAN_SLCAN.elf
+            ./GiUCAN_ELM327.elf

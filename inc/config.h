@@ -56,12 +56,31 @@
 
 #ifdef SLCAN
 
+#ifdef ELM327
+#error "Can't build SLCAN+ELM327"
+#endif
+
 #ifdef BHCAN
 #error "Can't build SLCAN+BHCAN"
 #endif
 
 #ifdef C1CAN
 #error "Can't build SLCAN+C1CAN"
+#endif
+
+#define LEDS_ON_CAN_RX
+#define LEDS_ON_CAN_TX
+
+#endif
+
+#ifdef ELM327
+
+#ifdef BHCAN
+#error "Can't build ELM327+BHCAN"
+#endif
+
+#ifdef C1CAN
+#error "Can't build ELM327+C1CAN"
 #endif
 
 #define LEDS_ON_CAN_RX

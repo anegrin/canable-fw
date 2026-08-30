@@ -22,6 +22,9 @@
 #include "usbd_cdc_if.h"
 #include "error.h"
 #include "slcan.h"
+#ifdef ELM327
+#include "elm327.h"
+#endif
 
 /* USER CODE BEGIN INCLUDE */
 
@@ -103,8 +106,13 @@ USBD_CDC_LineCodingTypeDef LineCoding = {
 /* USER CODE BEGIN PRIVATE_VARIABLES */
 static usbrx_buf_t rxbuf = {0};
 static uint8_t txbuf[TX_BUF_SIZE];
-static uint8_t slcan_str[SLCAN_MTU];
-static uint8_t slcan_str_index = 0;
+#ifdef ELM327
+#define CDC_COMMAND_MTU ELM327_LINE_MTU
+#else
+#define CDC_COMMAND_MTU SLCAN_MTU
+#endif
+static uint8_t command_str[CDC_COMMAND_MTU];
+static uint8_t command_str_index = 0;
 
 /* USER CODE END PRIVATE_VARIABLES */
 
@@ -377,8 +385,12 @@ uint8_t cdc_process(void)
         {
             if (rxbuf.buf[rxbuf.tail][i] == '\r')
             {
-                int8_t result = slcan_parse_str(slcan_str, slcan_str_index);
+#ifdef ELM327
+                elm327_command(command_str, command_str_index);
+#else
+                int8_t result = slcan_parse_str(command_str, command_str_index);
                 UNUSED(result);
+#endif
 
                 // Success
                 //if(result == 0)
@@ -387,19 +399,19 @@ uint8_t cdc_process(void)
                 //else
                 //    CDC_Transmit_FS("\a", 1);
 
-                slcan_str_index = 0;
+                command_str_index = 0;
                 processed = 1;
             }
             else
             {
                 // Check for overflow of buffer
-                if(slcan_str_index >= SLCAN_MTU)
+                if(command_str_index >= CDC_COMMAND_MTU)
                 {
                     // TODO: Return here and discard this CDC buffer?
-                    slcan_str_index = 0;
+                    command_str_index = 0;
                 }
 
-                slcan_str[slcan_str_index++] = rxbuf.buf[rxbuf.tail][i];
+                command_str[command_str_index++] = rxbuf.buf[rxbuf.tail][i];
             }
         }
 
@@ -422,9 +434,9 @@ uint8_t printf_to_usb(const char* format, ...)
 {
     va_list args;
     va_start(args, format);
-    int written = vsnprintf_((char*)slcan_str, SLCAN_MTU, format, args);
+    int written = vsnprintf_((char*)command_str, CDC_COMMAND_MTU, format, args);
     va_end(args);
-    return CDC_Transmit_FS(slcan_str, written < SLCAN_MTU ? (uint8_t) written : SLCAN_MTU);
+    return CDC_Transmit_FS(command_str, written < CDC_COMMAND_MTU ? (uint8_t) written : CDC_COMMAND_MTU);
   }
 #endif
 /* USER CODE END PRIVATE_FUNCTIONS_IMPLEMENTATION */

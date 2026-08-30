@@ -51,6 +51,11 @@ jobs:
           CFLAGS='${{ env.CFLAGS }} -DBUILD_VERSION=\"${{ env.COMMIT_SHORT_SHA }}\" -DSLCAN' make clean all
           mv build/GiUCAN*.elf GiUCAN_SLCAN_unstable.elf
           
+      - name: Compile ELM327
+        run: |
+          CFLAGS='${{ env.CFLAGS }} -DBUILD_VERSION=\"${{ env.COMMIT_SHORT_SHA }}\" -DELM327' make clean all
+          mv build/GiUCAN*.elf GiUCAN_ELM327_unstable.elf
+          
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
@@ -61,3 +66,4 @@ jobs:
             ./GiUCAN_C1CAN_unstable.elf
             ./GiUCAN_BHCAN_unstable.elf
             ./GiUCAN_SLCAN_unstable.elf
+            ./GiUCAN_ELM327_unstable.elf

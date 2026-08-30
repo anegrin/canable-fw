@@ -6,12 +6,12 @@
 #include "stm32f0xx_hal.h"
 #include "model.h"
 
-#ifdef SLCAN
+#if defined(SLCAN) || defined(ELM327)
 #ifdef DEBUG_MODE
 #define UART_QUEUE_SIZE 8
 #define MESSAGE_SIZE 128
 #else
-//minimal values as SLCAN does not use UART if no in debug mode
+// Minimal values: standalone USB CDC variants do not use UART unless debugging.
 #define UART_QUEUE_SIZE 1
 #define MESSAGE_SIZE 3
 #endif

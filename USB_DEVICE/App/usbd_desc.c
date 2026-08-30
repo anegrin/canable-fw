@@ -76,7 +76,11 @@
 #define USBD_INTERFACE_STRING_FS     "MSC Interface"
 #else
 #define USBD_PID_FS     22336
+#ifdef ELM327
+#define USBD_PRODUCT_STRING_FS "GiUCAN ELM327"
+#else
 #define USBD_PRODUCT_STRING_FS "GiUCAN SL"
+#endif
 #define USBD_CONFIGURATION_STRING_FS     "CDC Config"
 #define USBD_INTERFACE_STRING_FS     "CDC Interface"
 #endif
