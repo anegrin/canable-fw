@@ -68,6 +68,9 @@ float noop_extract(GlobalState *state, uint8_t *rx_msg_data);
     X(STEERING_ITEM, "Steering angle: %.1f"                    \
                      "\xB0")                                   \
     X(FUEL_LVL_ITEM, "Fuel level: %.0f%%/%.1fL")               \
+    X(FUEL_TEMP_ITEM, "Fuel temp.: %.0f"                       \
+                      "\xB0"                                   \
+                      "C")                                     \
     X(OIL_CHANGE_DIST_ITEM, "Oil change in: %.0fkm")
 #endif
 
@@ -232,6 +235,7 @@ forV1_extraction_function
     X(TIRES_TEMP_FRONT_ITEM, true, true, 0x18DAC7F1, 0x032240B1, extractTireTemp, true, true, 0x18DAC7F1, 0x032240B2, extractTireTemp)                 \
     X(TIRES_TEMP_REAR_ITEM, true, true, 0x18DAC7F1, 0x032240B3, extractTireTemp, true, true, 0x18DAC7F1, 0x032240B4, extractTireTemp)                  \
     X(FUEL_LVL_ITEM, true, true, 0x18DA10F1, 0x03221001, extractFuelPercent, true, true, 0x18DA10F1, 0x03221001, extractFuelLiters)                    \
+    X(FUEL_TEMP_ITEM, true, true, 0x18DA10F1, 0x03221900, extractTempCommon, false, false, 0, 0, noop_extract)                                         \
     X(OIL_CHANGE_DIST_ITEM, true, true, 0x18DA10F1, 0x0322380E, extractOilChangeOdometer, true, true, 0x18DA10F1, 0x03222001, extractOdometer)
 #endif
 #endif
@@ -259,6 +263,7 @@ forV1_extraction_function
     X(TIRES_TEMP_FRONT_ITEM, 60000)       \
     X(TIRES_TEMP_REAR_ITEM, 60000)        \
     X(FUEL_LVL_ITEM, 15000)               \
+    X(FUEL_TEMP_ITEM, 15000)              \
     X(OIL_CHANGE_DIST_ITEM, 60000)
 #endif
 
